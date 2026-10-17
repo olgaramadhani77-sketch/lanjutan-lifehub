@@ -8,22 +8,25 @@ use App\Http\Controllers\QuestController;
 use App\Http\Controllers\HabitController;
 use App\Http\Controllers\PomodoroController;
 use App\Http\Controllers\EcoQuestController;
+use App\Http\Controllers\Api\AuthController;  
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
 |--------------------------------------------------------------------------
-|
-| Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "api" middleware group. Make something great!
-|
 */
 
-// Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-//     return $request->user();
-//}
+// ============ AUTH (Sanctum) ============
+Route::post('/register', [AuthController::class, 'register']);
+Route::post('/login',    [AuthController::class, 'login']);
 
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/me',      [AuthController::class, 'me']);
+    Route::post('/logout', [AuthController::class, 'logout']);
+});
+// ========================================
 
+// ============ CRUD (milik temanmu — JANGAN DIUBAH) ============
 Route::get('/users', [UserController::class, 'index']);
 Route::get('/users/{id}', [UserController::class, 'show']);
 Route::post('/users', [UserController::class, 'store']);
