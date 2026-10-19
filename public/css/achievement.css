@@ -1,0 +1,174 @@
+/* ===============================
+   ACHIEVEMENT PAGE ONLY
+================================ */
+
+.achievement-workspace{
+    grid-template-columns:1fr 1fr;
+}
+
+.badge-list,
+.shop-list{
+    display:flex;
+    flex-direction:column;
+    gap:16px;
+}
+
+.badge-card,
+.shop-card{
+    background:var(--mint);
+    border:1px solid var(--mint-strong);
+    border-radius:28px;
+    padding:20px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:16px;
+    transition:.25s ease;
+}
+
+.badge-card:hover,
+.shop-card:hover{
+    transform:translateY(-5px);
+    box-shadow:0 18px 44px rgba(15,23,42,.10);
+}
+
+.badge-card.locked{
+    background:white;
+    opacity:.58;
+}
+
+.badge-left,
+.shop-left{
+    display:flex;
+    align-items:center;
+    gap:14px;
+}
+
+.badge-icon,
+.shop-icon{
+    width:50px;
+    height:50px;
+    border-radius:18px;
+    background:var(--navy);
+    color:white;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:24px;
+    flex-shrink:0;
+}
+
+.badge-card h3,
+.shop-card h3{
+    margin-bottom:4px;
+}
+
+.badge-card p,
+.shop-card p{
+    color:var(--muted);
+    line-height:1.5;
+}
+
+.shop-actions{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    justify-content:flex-end;
+}
+
+.shop-price{
+    display:inline-flex;
+    padding:7px 10px;
+    border-radius:999px;
+    background:white;
+    color:var(--navy);
+    font-size:12px;
+    font-weight:900;
+}
+
+@media(max-width:900px){
+    .achievement-workspace{
+        grid-template-columns:1fr;
+    }
+}
+
+@media(max-width:600px){
+    .badge-card,
+    .shop-card{
+        flex-direction:column;
+        align-items:flex-start;
+    }
+
+    .shop-actions{
+        width:100%;
+        justify-content:flex-start;
+    }
+}
+
+
+.character-preview-card{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    text-align:center;
+    gap:8px;
+}
+
+.character-preview-card .lifehub-avatar{
+    transform:scale(.78);
+    margin:-22px 0 -18px;
+}
+
+.achievement-workspace{
+    grid-template-columns:1fr 1fr;
+}
+
+.inventory-panel{
+    grid-column:1 / -1;
+}
+
+.inventory-list{
+    display:grid;
+    grid-template-columns:repeat(5, 1fr);
+    gap:14px;
+}
+
+.inventory-item{
+    background:var(--soft);
+    border:1px solid var(--border);
+    border-radius:22px;
+    padding:16px;
+}
+
+.inventory-item span{
+    display:block;
+    color:var(--muted);
+    font-size:12px;
+    font-weight:900;
+    margin-bottom:8px;
+}
+
+.inventory-item strong{
+    color:var(--navy);
+}
+
+.shop-card.owned{
+    background:#ECFEFF;
+}
+
+.shop-actions button:disabled{
+    opacity:.55;
+    cursor:not-allowed;
+}
+
+@media(max-width:900px){
+    .inventory-list{
+        grid-template-columns:repeat(2, 1fr);
+    }
+}
+
+@media(max-width:560px){
+    .inventory-list{
+        grid-template-columns:1fr;
+    }
+}
