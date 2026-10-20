@@ -1,0 +1,20 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Helper kecil yang bukan bagian dari Tailwind */
+a {
+  color: inherit;
+}
+
+.lh-icon {
+  font-style: normal;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.react-page-anchor {
+  scroll-margin-top: 110px;
+}
