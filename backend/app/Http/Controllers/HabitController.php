@@ -8,9 +8,15 @@ use Illuminate\Http\Request;
 class HabitController extends Controller
 {
     // GET /api/habits
-    public function index()
+    public function index(Request $request)
     {
-        return Habit::all();
+        $perPage = min(
+            max((int) $request->query('per_page', 5), 1),
+            50
+        );
+
+        return Habit::orderBy('id', 'desc')
+                    ->paginate($perPage);
     }
 
     // GET /api/habits/{id}

@@ -8,9 +8,15 @@ use Illuminate\Http\Request;
 class EcoQuestController extends Controller
 {
     // get semua quest
-    public function index()
+    public function index(Request $request)
     {
-        return response()->json(EcoQuest::all());
+        $perPage = min(
+            max((int) $request->query('per_page', 5), 1),
+            50
+        );
+
+        return EcoQuest::orderBy('id', 'desc')
+                    ->paginate($perPage);
     }
 
     // get satu quest berdasarkan ID
