@@ -7,7 +7,7 @@ const NAV_ITEMS = [
   ['quest', 'check-square', 'Quest', '/quest'],
   ['habit', 'repeat', 'Habit', '/habit'],
   ['pomodoro', 'timer', 'Pomodoro', '/pomodoro'],
-  // Menu Eco sudah dihapus
+  ['eco', 'leaf', 'Eco', '/eco'],
 ];
 
 export default function Nav({ active }) {

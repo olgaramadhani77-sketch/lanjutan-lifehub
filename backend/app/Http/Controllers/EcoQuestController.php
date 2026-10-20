@@ -11,7 +11,7 @@ class EcoQuestController extends Controller
     public function index(Request $request)
     {
         $perPage = min(
-            max((int) $request->query('per_page', 5), 1),
+            max((int) $request->query('per_page', 2), 1),
             50
         );
 

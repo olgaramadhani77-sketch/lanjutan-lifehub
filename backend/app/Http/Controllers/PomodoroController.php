@@ -8,15 +8,9 @@ use App\Models\Pomodoro;
 class PomodoroController extends Controller
 {
     // GET /api/pomodoro-sessions
-    public function index(Request $request)
+    public function index()
     {
-        $perPage = min(
-            max((int) $request->query('per_page', 5), 1),
-            50
-        );
-
-        return Pomodoro::orderBy('id', 'desc')
-                    ->paginate($perPage);
+        return Pomodoro::all();
     }
 
     // GET /api/pomodoro-sessions/{id}

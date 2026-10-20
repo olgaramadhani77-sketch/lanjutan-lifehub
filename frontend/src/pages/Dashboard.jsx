@@ -175,6 +175,12 @@ export default function Dashboard({ theme, toggleTheme }) {
                 <p>Track routines and build consistent daily habits.</p>
               </Link>
 
+              <Link to="/eco" className="shortcut-card">
+                <Icon name="leaf" />
+                <h3>Eco Quest</h3>
+                <p>Complete small green missions.</p>
+              </Link>
+
               <Link to="/pomodoro" className="shortcut-card">
                 <Icon name="timer" />
                 <h3>Pomodoro</h3>
