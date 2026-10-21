@@ -16,9 +16,9 @@ export default function Eco() {
   {/* --- FITUR LOAD MORE: State untuk batas tampilan item (awal 2) --- */}
   const [visibleCount, setVisibleCount] = useState(2);
 
-  const claimed = ecoQuests.filter((e) => e.claimed).length;
-  const available = ecoQuests.length - claimed;
-  const progress = ecoQuests.length ? Math.round((claimed / ecoQuests.length) * 100) : 0;
+  const completed = ecoQuests.filter((e) => e.completed).length;
+  const available = ecoQuests.length - completed;
+  const progress = ecoQuests.length ? Math.round((completed / ecoQuests.length) * 100) : 0;
 
   const submit = (e) => {
     e.preventDefault();
@@ -94,7 +94,7 @@ export default function Eco() {
 
         <section className="stats-grid">
           <StatCard label="Total Eco Quest" value={ecoQuests.length} />
-          <StatCard label="Claimed" value={claimed} />
+          <StatCard label="Completed" value={completed} />
           <StatCard label="Available" value={available} />
           {/* --- FITUR TAMBAHAN: Card Progress disisipkan di sini --- */}
           <StatCard label="Progress" value={`${progress}%`} />
@@ -146,22 +146,22 @@ export default function Eco() {
                 <>
                   {/* --- FITUR LOAD MORE: Pemotongan array menggunakan .slice(0, visibleCount) --- */}
                   {ecoQuests.slice(0, visibleCount).map((q, i) => (
-                    <div key={i} className={`eco-card ${q.claimed ? 'claimed' : ''}`}>
+                    <div key={i} className={`eco-card ${q.completed ? 'completed' : ''}`}>
                       <div className="eco-card-content">
                         <div>
                           {/* --- MENGHAPUS DISPLAY PILL '+q.points Eco Points' --- */}
                           <h3>{q.title}</h3>
                           <p>{q.description || 'No description added.'}</p>
                         </div>
-                        <div className="eco-status">{q.claimed ? 'Claimed' : 'Available'}</div>
+                        <div className="eco-status">{q.completed ? 'Completed' : 'Available'}</div>
                       </div>
 
                       <div className="eco-actions">
                         <button className="secondary-btn" onClick={() => startEdit(i, q)}>
                           Edit
                         </button>
-                        <button className="primary-btn" disabled={q.claimed} onClick={() => claimEcoQuest(i)}>
-                          {q.claimed ? 'Claimed' : 'Claim'}
+                        <button className="primary-btn" disabled={q.completed} onClick={() => completeEcoQuest(i)}>
+                          {q.completed ? 'Completed' : 'Complete'}
                         </button>
                         <button className="danger-btn" onClick={() => deleteEcoQuest(i)}>
                           Delete

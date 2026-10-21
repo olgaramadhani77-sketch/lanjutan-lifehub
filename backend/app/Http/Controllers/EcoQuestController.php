@@ -34,7 +34,7 @@ class EcoQuestController extends Controller
         'user_id'     => 'required|exists:users,id',
         'title'       => 'required|string|max:255',
         'description' => 'nullable|string',
-        'claimed'     => 'nullable|boolean',
+        'completed'   => 'nullable|boolean',
     ]);
 
     $quest = EcoQuest::create($validated);
@@ -51,7 +51,7 @@ class EcoQuestController extends Controller
         'user_id'     => 'sometimes|exists:users,id',
         'title'       => 'sometimes|string|max:255',
         'description' => 'nullable|string',
-        'claimed'     => 'sometimes|boolean',
+        'completed'   => 'sometimes|boolean',
     ]);
 
     $quest->update($validated);
