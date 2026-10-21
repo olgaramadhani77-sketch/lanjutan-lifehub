@@ -13,10 +13,10 @@ class EcoQuest extends Model
         'user_id',
         'title',
         'description',
-        'claimed',
+        'completed',
     ];
 
     protected $casts = [
-        'claimed' => 'nullable|in:claimed,not_claimed',
+        'completed' => 'boolean',
     ];
 }
