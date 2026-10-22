@@ -8,9 +8,15 @@ use Illuminate\Http\Request;
 class QuestController extends Controller
 {
     // GET
-    public function index()
+    public function index(Request $request)
     {
-        return Quest::all();
+        $perPage = min(
+            max((int) $request->query('per_page', 2), 1),
+            50
+        );
+
+        return Quest::orderBy('id', 'desc')
+                    ->paginate($perPage);
     }
 
     public function show($id)

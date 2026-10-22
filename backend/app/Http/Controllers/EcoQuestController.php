@@ -8,9 +8,15 @@ use Illuminate\Http\Request;
 class EcoQuestController extends Controller
 {
     // get semua quest
-    public function index()
+    public function index(Request $request)
     {
-        return response()->json(EcoQuest::all());
+        $perPage = min(
+            max((int) $request->query('per_page', 2), 1),
+            50
+        );
+
+        return EcoQuest::orderBy('id', 'desc')
+                    ->paginate($perPage);
     }
 
     // get satu quest berdasarkan ID
@@ -28,7 +34,7 @@ class EcoQuestController extends Controller
         'user_id'     => 'required|exists:users,id',
         'title'       => 'required|string|max:255',
         'description' => 'nullable|string',
-        'claimed'     => 'nullable|boolean',
+        'completed'   => 'nullable|boolean',
     ]);
 
     $quest = EcoQuest::create($validated);
@@ -45,7 +51,7 @@ class EcoQuestController extends Controller
         'user_id'     => 'sometimes|exists:users,id',
         'title'       => 'sometimes|string|max:255',
         'description' => 'nullable|string',
-        'claimed'     => 'sometimes|boolean',
+        'completed'   => 'sometimes|boolean',
     ]);
 
     $quest->update($validated);

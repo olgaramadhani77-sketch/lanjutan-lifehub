@@ -22,6 +22,9 @@ export default function Habit() {
   const [form, setForm] = useState(blankForm);
   const [edit, setEdit] = useState(null);
 
+  {/* --- FITUR LOAD MORE: State untuk batas tampilan item (awal 2) --- */}
+  const [visibleCount, setVisibleCount] = useState(2);
+
   const completed = habits.filter((h) => h.completed).length;
   const progress = habits.length
     ? Math.round((completed / habits.length) * 100)
@@ -49,6 +52,11 @@ export default function Habit() {
   const cancelEdit = () => {
     setEdit(null);
     setForm(blankForm);
+  };
+
+  {/* --- FITUR LOAD MORE: Handler penambahan jumlah item (+2) --- */}
+  const handleLoadMore = () => {
+    setVisibleCount((prevCount) => prevCount + 2);
   };
 
   return (
@@ -170,53 +178,69 @@ export default function Habit() {
 
             <div className="feature-list">
               {habits.length ? (
-                habits.map((h, i) => (
-                  <div
-                    key={i}
-                    className={`eco-card ${h.completed ? "claimed" : ""}`}
-                  >
-                    <div className="eco-card-content">
-                      <div>
-                        <h3>{h.title}</h3>
+                <>
+                  {/* --- FITUR LOAD MORE: Pemotongan array menggunakan .slice(0, visibleCount) --- */}
+                  {habits.slice(0, visibleCount).map((h, i) => (
+                    <div
+                      key={i}
+                      className={`eco-card ${h.completed ? "claimed" : ""}`}
+                    >
+                      <div className="eco-card-content">
+                        <div>
+                          <h3>{h.title}</h3>
 
-                        <p>{h.description || "No description added."}</p>
+                          <p>{h.description || "No description added."}</p>
 
-                        <div className="meta-row">
-                          <span className="tag dark">{h.category}</span>
+                          <div className="meta-row">
+                            <span className="tag dark">{h.category}</span>
 
-                          <span className="tag light">{h.target}</span>
+                            <span className="tag light">{h.target}</span>
+                          </div>
+                        </div>
+
+                        <div className="eco-status">
+                          {h.completed ? "Completed" : "Active"}
                         </div>
                       </div>
 
-                      <div className="eco-status">
-                        {h.completed ? "Completed" : "Active"}
+                      <div className="eco-actions">
+                        <button
+                          className="secondary-btn"
+                          onClick={() => startEdit(i, h)}
+                        >
+                          Edit
+                        </button>
+
+                        <button
+                          className="primary-btn"
+                          onClick={() => toggleHabit(i)}
+                        >
+                          {h.completed ? "Undone" : "Done"}
+                        </button>
+
+                        <button
+                          className="danger-btn"
+                          onClick={() => deleteHabit(i)}
+                        >
+                          Delete
+                        </button>
                       </div>
                     </div>
+                  ))}
 
-                    <div className="eco-actions">
+                  {/* --- FITUR LOAD MORE: Tombol Load More muncul jika sisa data masih ada --- */}
+                  {visibleCount < habits.length && (
+                    <div style={{ textAlign: "center", marginTop: "1rem" }}>
                       <button
+                        type="button"
                         className="secondary-btn"
-                        onClick={() => startEdit(i, h)}
+                        onClick={handleLoadMore}
                       >
-                        Edit
-                      </button>
-
-                      <button
-                        className="primary-btn"
-                        onClick={() => toggleHabit(i)}
-                      >
-                        {h.completed ? "Undone" : "Done"}
-                      </button>
-
-                      <button
-                        className="danger-btn"
-                        onClick={() => deleteHabit(i)}
-                      >
-                        Delete
+                        Load More
                       </button>
                     </div>
-                  </div>
-                ))
+                  )}
+                </>
               ) : (
                 <div className="empty-feature">
                   <h3>No habits yet</h3>

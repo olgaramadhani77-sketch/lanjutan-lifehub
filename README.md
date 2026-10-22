@@ -1,1 +1,1 @@
-repo dulu :https://github.com/justaryadi/Eco-Project
+repo dullu : https://github.com/justaryadi/Eco-Project
