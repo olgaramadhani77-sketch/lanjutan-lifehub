@@ -21,16 +21,19 @@ export default function App() {
   const route = normalize(useRoute());
   const themeTools = useTheme(route);
 
-  let Page;
-
-  if (route === '/login' || route === '/register') {
-  Page = <LoginView />;
-  } else if (
+  // Cek apakah sedang berada di halaman login/auth
+  const isAuthPage = 
     route === '/' ||
     route === '/index.html' ||
     route === '/onboarding' ||
-    route === '/dashboard'
-  ) {
+    route === '/login' ||
+    route === '/register';
+
+  let Page;
+
+  if (isAuthPage) {
+    Page = <LoginView />;
+  } else if (route === '/dashboard') {
     Page = (
       <Dashboard
         theme={themeTools.theme}
@@ -54,14 +57,14 @@ export default function App() {
   } else if (route === '/about') {
     Page = <Legal type="about" />;
   } else {
-    Page = <Dashboard />;
+    Page = <LoginView />;
   }
 
-  // 4. Bungkus dengan <AuthProvider>
   return (
     <AuthProvider>
       {Page}
-      <RewardToast />
+      {/* RewardToast hanya akan muncul jika bukan di halaman login */}
+      {!isAuthPage && <RewardToast />}
     </AuthProvider>
   );
 }

@@ -25,7 +25,7 @@ export default function Dashboard({ theme, toggleTheme }) {
   usePageStyles(['/css/dashboard.css', '/css/gamification.css']);
 
   const s = useLifeHub();
-  const { isAuthenticated, user, logout } = useAuth();
+  const { isAuthenticated, user } = useAuth();
 
   const [notif, setNotif] = useState(false);
   const [profilePanel, setProfilePanel] = useState(false);
@@ -78,15 +78,6 @@ export default function Dashboard({ theme, toggleTheme }) {
     setReset(true);
   };
 
-  const handleAuthClick = () => {
-    if (isAuthenticated) {
-      logout();
-      navigate('/login');
-    } else {
-      navigate('/login');
-    }
-  };
-
   return (
     <>
       <Nav active="dashboard" />
@@ -123,25 +114,6 @@ export default function Dashboard({ theme, toggleTheme }) {
               >
                 Profile
               </Link>
-
-              {/* Tombol Akses Login / Logout */}
-              <button
-                onClick={handleAuthClick}
-                className="primary-btn"
-                style={{
-                  padding: '8px 16px',
-                  fontSize: '0.875rem',
-                  borderRadius: '9999px',
-                  backgroundColor: isAuthenticated ? '#EF4444' : '#14B8A6',
-                  color: '#FFFFFF',
-                  fontWeight: '700',
-                  border: 'none',
-                  cursor: 'pointer',
-                  transition: 'all 0.2s',
-                }}
-              >
-                {isAuthenticated ? 'Logout' : 'Login / Register'}
-              </button>
             </div> 
           </header>
 

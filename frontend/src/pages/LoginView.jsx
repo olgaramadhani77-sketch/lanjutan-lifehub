@@ -9,7 +9,7 @@ export const LoginView = () => {
   const [name, setName] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
 
-  const { loginSuccess, enterGuestMode } = useAuth();
+  const { loginSuccess } = useAuth();
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -21,11 +21,6 @@ export const LoginView = () => {
     }
 
     loginSuccess({ email, name: name || email.split('@')[0] });
-    navigate('/dashboard');
-  };
-
-  const handleGuestEnter = () => {
-    enterGuestMode();
     navigate('/dashboard');
   };
 
@@ -93,7 +88,7 @@ export const LoginView = () => {
           </button>
         </form>
 
-        <div style={{ textAlign: 'center', margin: '20px 0 16px', fontSize: '0.875rem' }}>
+        <div style={{ textAlign: 'center', margin: '20px 0 0', fontSize: '0.875rem' }}>
           <span>{isRegister ? 'Sudah punya akun?' : 'Belum punya akun?'} </span>
           <button
             type="button"
@@ -101,17 +96,6 @@ export const LoginView = () => {
             style={{ background: 'none', border: 'none', color: '#4F46E5', fontWeight: '600', cursor: 'pointer', padding: 0 }}
           >
             {isRegister ? 'Masuk di sini' : 'Daftar di sini'}
-          </button>
-        </div>
-
-        <div style={{ borderTop: '1px solid var(--border-color, #eee)', paddingTop: '16px', textAlign: 'center' }}>
-          <button
-            type="button"
-            className="secondary-btn full-btn"
-            onClick={handleGuestEnter}
-            style={{ width: '100%', padding: '10px', fontSize: '0.875rem' }}
-          >
-            🎮 Masuk sebagai Guest Mode
           </button>
         </div>
 
