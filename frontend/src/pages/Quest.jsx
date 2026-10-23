@@ -58,15 +58,29 @@ export default function Quest() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
+  // ============================================================
+  // FUNGSI request() — SUDAH DITAMBAH TOKEN
+  // ============================================================
   async function request(url, options = {}) {
+    const token = localStorage.getItem("token");
+
     const response = await fetch(url, {
       ...options,
       headers: {
         Accept: "application/json",
         ...(options.body ? { "Content-Type": "application/json" } : {}),
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
         ...options.headers,
       },
     });
+
+    // Token invalid/expired → redirect ke login
+    if (response.status === 401) {
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      window.location.href = "/login";
+      throw new Error("Sesi berakhir. Silakan login ulang.");
+    }
 
     if (!response.ok) {
       const body = await response.json().catch(() => ({}));
