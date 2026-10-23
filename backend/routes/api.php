@@ -8,7 +8,7 @@ use App\Http\Controllers\QuestController;
 use App\Http\Controllers\HabitController;
 use App\Http\Controllers\PomodoroController;
 use App\Http\Controllers\EcoQuestController;
-use App\Http\Controllers\Api\AuthController;  
+use App\Http\Controllers\Api\AuthController;
 
 /*
 |--------------------------------------------------------------------------
@@ -20,23 +20,29 @@ use App\Http\Controllers\Api\AuthController;
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login',    [AuthController::class, 'login']);
 
+// ============ ROUTE YANG BUTUH LOGIN ============
 Route::middleware('auth:sanctum')->group(function () {
+
+    // Auth
     Route::get('/me',      [AuthController::class, 'me']);
     Route::post('/logout', [AuthController::class, 'logout']);
+
+    // Quest
+    Route::get('/quests', [QuestController::class, 'index']);
+    Route::get('/quests/{id}', [QuestController::class, 'show']);
+    Route::post('/quests', [QuestController::class, 'store']);
+    Route::put('/quests/{id}', [QuestController::class, 'update']);
+    Route::delete('/quests/{id}', [QuestController::class, 'destroy']);
 });
 
+// ============ ROUTE PUBLIK (belum diproteksi) ============
+// Nanti dipindah ke atas setelah controller-nya diperbaiki
 
 Route::get('/users', [UserController::class, 'index']);
 Route::get('/users/{id}', [UserController::class, 'show']);
 Route::post('/users', [UserController::class, 'store']);
 Route::put('/users/{id}', [UserController::class, 'update']);
 Route::delete('/users/{id}', [UserController::class, 'destroy']);
-
-Route::get('/quests', [QuestController::class, 'index']);
-Route::get('/quests/{id}', [QuestController::class, 'show']);
-Route::post('/quests', [QuestController::class, 'store']);
-Route::put('/quests/{id}', [QuestController::class, 'update']);
-Route::delete('/quests/{id}', [QuestController::class, 'destroy']);
 
 Route::get('/habits', [HabitController::class, 'index']);
 Route::get('/habits/{id}', [HabitController::class, 'show']);
