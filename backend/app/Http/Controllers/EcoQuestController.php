@@ -7,7 +7,8 @@ use Illuminate\Http\Request;
 
 class EcoQuestController extends Controller
 {
-    // get semua quest
+    // GET /api/eco-quests
+    // Hanya mengambil Eco Quest milik user yang login
     public function index(Request $request)
     {
         $perPage = min(
@@ -15,59 +16,66 @@ class EcoQuestController extends Controller
             50
         );
 
-        return EcoQuest::orderBy('id', 'desc')
-                    ->paginate($perPage);
+        return EcoQuest::where('user_id', $request->user()->id)
+            ->orderBy('id', 'desc')
+            ->paginate($perPage);
     }
 
-    // get satu quest berdasarkan ID
-    public function show($id)
+    // GET /api/eco-quests/{id}
+    public function show(Request $request, $id)
     {
-        $quest = EcoQuest::findOrFail($id);
+        $ecoQuest = EcoQuest::where('user_id', $request->user()->id)
+            ->findOrFail($id);
 
-        return response()->json($quest);
+        return response()->json($ecoQuest);
     }
 
-    // post quest baru
+    // POST /api/eco-quests
     public function store(Request $request)
     {
-    $validated = $request->validate([
-        'user_id'     => 'required|exists:users,id',
-        'title'       => 'required|string|max:255',
-        'description' => 'nullable|string',
-        'completed'   => 'nullable|boolean',
-    ]);
+        $validated = $request->validate([
+            'title'       => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'completed'   => 'sometimes|boolean',
+        ]);
 
-    $quest = EcoQuest::create($validated);
+        $ecoQuest = EcoQuest::create([
+            'user_id'     => $request->user()->id,
+            'title'       => $validated['title'],
+            'description' => $validated['description'] ?? null,
+            'completed'   => $validated['completed'] ?? false,
+        ]);
 
-    return response()->json($quest, 201);
+        return response()->json($ecoQuest, 201);
     }
 
-    // put quest
+    // PUT /api/eco-quests/{id}
     public function update(Request $request, $id)
-{
-    $quest = EcoQuest::findOrFail($id);
-
-    $validated = $request->validate([
-        'user_id'     => 'sometimes|exists:users,id',
-        'title'       => 'sometimes|string|max:255',
-        'description' => 'nullable|string',
-        'completed'   => 'sometimes|boolean',
-    ]);
-
-    $quest->update($validated);
-
-    return response()->json($quest);
-}
-
-    // delete quest
-    public function destroy($id)
     {
-        $quest = EcoQuest::findOrFail($id);
+        $ecoQuest = EcoQuest::where('user_id', $request->user()->id)
+            ->findOrFail($id);
 
-        $quest->delete();
+        $validated = $request->validate([
+            'title'       => 'sometimes|required|string|max:255',
+            'description' => 'nullable|string',
+            'completed'   => 'sometimes|boolean',
+        ]);
+
+        $ecoQuest->update($validated);
+
+        return response()->json($ecoQuest);
+    }
+
+    // DELETE /api/eco-quests/{id}
+    public function destroy(Request $request, $id)
+    {
+        $ecoQuest = EcoQuest::where('user_id', $request->user()->id)
+            ->findOrFail($id);
+
+        $ecoQuest->delete();
 
         return response()->json([
-            'message' => 'EcoQuest berhasil dihapus'
+            'message' => 'Eco Quest berhasil dihapus',
         ]);
     }
 }
