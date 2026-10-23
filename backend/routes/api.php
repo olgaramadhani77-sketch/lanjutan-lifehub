@@ -33,6 +33,13 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/quests', [QuestController::class, 'store']);
     Route::put('/quests/{id}', [QuestController::class, 'update']);
     Route::delete('/quests/{id}', [QuestController::class, 'destroy']);
+
+    // Habit
+    Route::get('/habits', [HabitController::class, 'index']);
+    Route::get('/habits/{id}', [HabitController::class, 'show']);
+    Route::post('/habits', [HabitController::class, 'store']);
+    Route::put('/habits/{id}', [HabitController::class, 'update']);
+    Route::delete('/habits/{id}', [HabitController::class, 'destroy']);
 });
 
 // ============ ROUTE PUBLIK (belum diproteksi) ============
@@ -43,12 +50,6 @@ Route::get('/users/{id}', [UserController::class, 'show']);
 Route::post('/users', [UserController::class, 'store']);
 Route::put('/users/{id}', [UserController::class, 'update']);
 Route::delete('/users/{id}', [UserController::class, 'destroy']);
-
-Route::get('/habits', [HabitController::class, 'index']);
-Route::get('/habits/{id}', [HabitController::class, 'show']);
-Route::post('/habits', [HabitController::class, 'store']);
-Route::put('/habits/{id}', [HabitController::class, 'update']);
-Route::delete('/habits/{id}', [HabitController::class, 'destroy']);
 
 Route::get('/pomodoro-sessions', [PomodoroController::class, 'index']);
 Route::get('/pomodoro-sessions/{id}', [PomodoroController::class, 'show']);

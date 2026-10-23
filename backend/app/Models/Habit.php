@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Habit extends Model
 {
+    use HasFactory;
+
     protected $fillable = [
         'user_id',
         'title',
@@ -19,4 +21,9 @@ class Habit extends Model
     protected $casts = [
         'completed' => 'boolean',
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }
