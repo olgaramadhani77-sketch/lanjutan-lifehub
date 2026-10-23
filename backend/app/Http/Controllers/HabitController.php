@@ -11,30 +11,43 @@ class HabitController extends Controller
     public function index(Request $request)
     {
         $perPage = min(
-            max((int) $request->query('per_page', 2), 1),
+            max((int) $request->query('per_page', 10), 1),
             50
         );
 
-        return Habit::orderBy('id', 'desc')
+        // Hanya habit milik user yang login
+        return Habit::where('user_id', $request->user()->id)
+                    ->orderBy('id', 'desc')
                     ->paginate($perPage);
     }
 
     // GET /api/habits/{id}
-    public function show($id)
+    public function show(Request $request, $id)
     {
-        return Habit::findOrFail($id);
+        $habit = Habit::where('user_id', $request->user()->id)
+                      ->findOrFail($id);
+
+        return response()->json($habit);
     }
 
     // POST /api/habits
     public function store(Request $request)
     {
+        $validated = $request->validate([
+            'title'       => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'category'    => 'nullable|string|max:100',
+            'daily_type'  => 'nullable|string|max:50',
+            'completed'   => 'boolean',
+        ]);
+
         $habit = Habit::create([
-            'user_id' => $request->user_id,
-            'title' => $request->title,
-            'description' => $request->description,
-            'category' => $request->category,
-            'daily_type' => $request->daily_type,
-            'completed' => $request->completed ?? false,
+            'user_id'     => $request->user()->id,
+            'title'       => $validated['title'],
+            'description' => $validated['description'] ?? null,
+            'category'    => $validated['category'] ?? null,
+            'daily_type'  => $validated['daily_type'] ?? 'Daily',
+            'completed'   => $validated['completed'] ?? false,
         ]);
 
         return response()->json($habit, 201);
@@ -43,23 +56,27 @@ class HabitController extends Controller
     // PUT /api/habits/{id}
     public function update(Request $request, $id)
     {
-        $habit = Habit::findOrFail($id);
+        $habit = Habit::where('user_id', $request->user()->id)
+                      ->findOrFail($id);
 
-        $habit->update([
-            'title' => $request->title,
-            'description' => $request->description,
-            'category' => $request->category,
-            'daily_type' => $request->daily_type,
-            'completed' => $request->completed,
+        $validated = $request->validate([
+            'title'       => 'sometimes|string|max:255',
+            'description' => 'nullable|string',
+            'category'    => 'nullable|string|max:100',
+            'daily_type'  => 'nullable|string|max:50',
+            'completed'   => 'boolean',
         ]);
+
+        $habit->update($validated);
 
         return response()->json($habit);
     }
 
     // DELETE /api/habits/{id}
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
-        $habit = Habit::findOrFail($id);
+        $habit = Habit::where('user_id', $request->user()->id)
+                      ->findOrFail($id);
 
         $habit->delete();
 
