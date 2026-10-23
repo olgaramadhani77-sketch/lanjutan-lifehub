@@ -7,27 +7,69 @@ export const LoginView = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const { loginSuccess } = useAuth();
+  const { loginSuccess, API_URL } = useAuth();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setErrorMessage('');
 
+    // Validasi dasar
     if (!email || !password || (isRegister && !name)) {
       setErrorMessage('Mohon lengkapi semua kolom.');
       return;
     }
+    if (isRegister && password !== confirmPassword) {
+      setErrorMessage('Konfirmasi password tidak cocok.');
+      return;
+    }
 
-    loginSuccess({ email, name: name || email.split('@')[0] });
-    navigate('/dashboard');
+    setLoading(true);
+
+    try {
+      const url = isRegister ? `${API_URL}/register` : `${API_URL}/login`;
+      const body = isRegister
+        ? { name, email, password, password_confirmation: confirmPassword }
+        : { email, password };
+
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(body),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        // Tampilkan error validasi dari Laravel
+        if (data.errors) {
+          setErrorMessage(Object.values(data.errors).flat().join(', '));
+        } else {
+          setErrorMessage(data.message || 'Terjadi kesalahan. Coba lagi.');
+        }
+        return;
+      }
+
+      // Sukses — simpan token & user
+      loginSuccess(data.user, data.token);
+      navigate('/dashboard');
+    } catch (err) {
+      setErrorMessage('Gagal terhubung ke server. Pastikan backend jalan di port 8000.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div className="app-container" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '80vh', padding: '20px' }}>
       <div className="card-panel" style={{ maxWidth: '420px', width: '100%', padding: '32px', borderRadius: '16px', boxShadow: '0 8px 24px rgba(0,0,0,0.08)' }}>
-        
+
         {/* Brand Header */}
         <div style={{ textAlign: 'center', marginBottom: '24px' }}>
           <h1 style={{ fontSize: '1.8rem', fontWeight: 'bold', margin: '0 0 8px 0' }}>
@@ -44,7 +86,7 @@ export const LoginView = () => {
           </div>
         )}
 
-        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px'}}>
           {isRegister && (
             <div>
               <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', marginBottom: '6px' }}>Nama Lengkap</label>
@@ -83,8 +125,27 @@ export const LoginView = () => {
             />
           </div>
 
-          <button type="submit" className="primary-btn full-btn" style={{ marginTop: '8px', padding: '12px', fontSize: '1rem', fontWeight: '600' }}>
-            {isRegister ? 'Daftar Sekarang' : 'Masuk Akun'}
+          {isRegister && (
+            <div>
+              <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', marginBottom: '6px' }}>Konfirmasi Password</label>
+              <input
+                type="password"
+                className="input-field"
+                placeholder="••••••••"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1px solid var(--border-color, #ccc)' }}
+              />
+            </div>
+          )}
+
+          <button
+            type="submit"
+            className="primary-btn full-btn"
+            disabled={loading}
+            style={{ marginTop: '8px', padding:'12px', fontSize: '1rem', fontWeight: '600', opacity: loading ? 0.6 : 1 }}
+          >
+            {loading ? 'Memproses...' : (isRegister ? 'Daftar Sekarang' : 'Masuk Akun')}
           </button>
         </form>
 
