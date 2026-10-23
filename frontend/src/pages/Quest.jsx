@@ -102,7 +102,7 @@ export default function Quest() {
     setError("");
 
     try {
-      const result = await request(`${API_URL}?per_page=10`);
+      const result = await request(`${API_URL}?per_page=2`);
 
       setTasks((result.data || []).map(normalizeQuest));
       setNextPageUrl(result.next_page_url || null);
