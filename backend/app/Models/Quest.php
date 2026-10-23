@@ -15,4 +15,14 @@ class Quest extends Model
         'due_date',
         'completed',
     ];
+
+    protected $casts = [
+        'completed' => 'boolean',
+        'due_date'  => 'date',
+    ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }
