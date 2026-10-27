@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLifeHub, usePageStyles, navigate } from '../utils/hooks.js';
 import {
   Nav,
@@ -9,7 +9,8 @@ import {
   ConfirmResetModal,
   QuestModal,
 } from '../components/index.js';
-import { toggleTask, deleteTask, toggleHabit, getNotifications } from '../utils/core.js';
+import { toggleHabit, getNotifications } from '../utils/core.js';
+import { fetchTasks, deleteTaskApi, toggleTaskApi } from '../utils/taskApi.js';
 import { useAuth } from '../AuthContext.jsx';
 
 function greeting(name) {
@@ -36,12 +37,56 @@ export default function Dashboard({ theme, toggleTheme }) {
   // State Kalender Bulanan
   const [currentDate, setCurrentDate] = useState(new Date());
 
+  // ============ TASKS DARI API ============
+  const [tasks, setTasks] = useState([]);
+  const [tasksLoading, setTasksLoading] = useState(true);
+
+  useEffect(() => {
+    loadTasks();
+  }, []);
+
+  async function loadTasks() {
+    setTasksLoading(true);
+    try {
+      const data = await fetchTasks();
+      setTasks(data);
+    } catch (err) {
+      console.error('Gagal load tasks:', err.message);
+    } finally {
+      setTasksLoading(false);
+    }
+  }
+
+  async function handleToggleTask(t) {
+    try {
+      await toggleTaskApi(t.id, t.completed);
+      await loadTasks();
+    } catch (err) {
+      console.error(err.message);
+    }
+  }
+
+  async function handleDeleteTask(t) {
+    if (!window.confirm(`Hapus task "${t.title}"?`)) return;
+    try {
+      await deleteTaskApi(t.id);
+      await loadTasks();
+    } catch (err) {
+      console.error(err.message);
+    }
+  }
+  // ==========================================
+
   const notifications = getNotifications();
 
-  const filteredTasks = s.tasks.filter((t) => !search || t.title.toLowerCase().includes(search.toLowerCase()));
-  const highPriorityCount = s.tasks.filter((t) => t.priority === 'High').length;
-  const overdueCount = s.tasks.filter((t) => t.dueDate && new Date(t.dueDate) < new Date(new Date().toDateString()) && !t.completed).length;
+  const filteredTasks = tasks.filter((t) => !search || t.title.toLowerCase().includes(search.toLowerCase()));
+  const highPriorityCount = tasks.filter((t) => t.priority === 'High').length;
+  const overdueCount = tasks.filter((t) => t.dueDate && new Date(t.dueDate) < new Date(new Date().toDateString()) && !t.completed).length;
   const habitsLeft = s.habits.filter((h) => !h.completed).length;
+
+  // Ringkasan tasks dari state lokal (bukan dari getSummary)
+  const totalTasks = tasks.length;
+  const completedTasks = tasks.filter((t) => t.completed).length;
 
   const displayName = isAuthenticated ? (user?.name || s.profile.name) : 'Tamu';
 
@@ -265,17 +310,17 @@ export default function Dashboard({ theme, toggleTheme }) {
                 </div>
 
                 <p className="progress-text">
-                  <span>{s.completedTasks}</span>/<span>{s.totalTasks}</span> done
+                  <span>{completedTasks}</span>/<span>{totalTasks}</span> done
                 </p>
 
                 <div className="quest-overview">
                   <div className="overview-card">
                     <p>Total</p>
-                    <h4>{s.totalTasks}</h4>
+                    <h4>{totalTasks}</h4>
                   </div>
                   <div className="overview-card success">
                     <p>Completed</p>
-                    <h4>{s.completedTasks}</h4>
+                    <h4>{completedTasks}</h4>
                   </div>
                   <div className="overview-card warning">
                     <p>High Priority</p>
@@ -288,17 +333,19 @@ export default function Dashboard({ theme, toggleTheme }) {
                 </div>
 
                 <div className="task-list">
-                  {filteredTasks.length ? (
-                    filteredTasks.slice(0, 5).map((t, i) => (
-                      <div className={`task-item ${t.completed ? 'completed' : ''}`} key={i}>
-                        <button className={`task-check ${t.completed ? 'done' : ''}`} onClick={() => toggleTask(i)}></button>
+                  {tasksLoading ? (
+                    <p style={{ padding: '12px', color: '#6b7280' }}>Loading tasks...</p>
+                  ) : filteredTasks.length ? (
+                    filteredTasks.slice(0, 5).map((t) => (
+                      <div className={`task-item ${t.completed ? 'completed' : ''}`} key={t.id}>
+                        <button className={`task-check ${t.completed ? 'done' : ''}`} onClick={() => handleToggleTask(t)}></button>
                         <div>
                           <h4>{t.title}</h4>
                           <p>
-                            {t.category} • {t.priority}
+                            {t.category || 'Personal'} • {t.priority}
                           </p>
                         </div>
-                        <button className="task-delete" onClick={() => deleteTask(i)}>
+                        <button className="task-delete" onClick={() => handleDeleteTask(t)}>
                           ×
                         </button>
                       </div>
@@ -312,7 +359,7 @@ export default function Dashboard({ theme, toggleTheme }) {
                 </div>
 
                 <div className="progress-bar">
-                  <div style={{ width: `${s.totalTasks ? (s.completedTasks / s.totalTasks) * 100 : 0}%` }}></div>
+                  <div style={{ width: `${totalTasks ? (completedTasks / totalTasks) * 100 : 0}%` }}></div>
                 </div>
               </div>
 
@@ -369,7 +416,7 @@ export default function Dashboard({ theme, toggleTheme }) {
 
       <NotificationModal open={notif} onClose={() => setNotif(false)} />
       <ProfileSplit open={profilePanel} onClose={() => setProfilePanel(false)} onNewQuest={openNewQuestFromPanel} onReset={openResetFromPanel} />
-      <QuestModal open={questModal} onClose={() => setQuestModal(false)} />
+      <QuestModal open={questModal} onClose={() => setQuestModal(false)} onCreated={loadTasks} />
       <ConfirmResetModal open={reset} onClose={() => setReset(false)} />
     </>
   );
