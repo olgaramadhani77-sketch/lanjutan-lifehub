@@ -1,4 +1,5 @@
 import React from 'react';
+import Landing from './pages/Landing.jsx';
 import LoginView from './pages/LoginView.jsx';
 import Dashboard from './pages/Dashboard.jsx';
 import Quest from './pages/Quest.jsx';
@@ -31,10 +32,12 @@ export default function App() {
 
   let Page;
 
-  if (isAuthPage) {
-    Page = <LoginView />;
-  } else if (route === '/dashboard') {
-    Page = (
+  if (route === '/') {
+  Page = <Landing />;
+} else if (isAuthPage) {
+  Page = <LoginView />;
+} else if (route === '/dashboard') {
+  Page = (
       <Dashboard
         theme={themeTools.theme}
         toggleTheme={themeTools.toggleTheme}
