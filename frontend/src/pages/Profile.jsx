@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useLifeHub, usePageStyles, navigate } from '../utils/hooks.js';
+import { updateProfile } from '../utils/core.js';
 import { Nav, Link } from '../components/index.js';
 import { useAuth } from '../AuthContext.jsx';
 
@@ -30,9 +31,15 @@ export default function Profile() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (s.updateProfile) {
-      s.updateProfile(form);
-    }
+    // ✅ PERBAIKAN: panggil updateProfile langsung dari core.js
+    updateProfile({
+      name: form.name,
+      bio: form.bio,
+      goal: form.goal,
+      location: form.location,
+      focusStyle: form.focusStyle,
+      favoriteTime: form.favoriteTime,
+    });
     setSavedMessage(true);
     setTimeout(() => setSavedMessage(false), 3000);
   };
@@ -226,7 +233,7 @@ export default function Profile() {
           {/* SUMMARY PROFILE */}
           <section className="panel" style={{ padding: '24px', borderRadius: '20px', backgroundColor: '#ffffff', display: 'flex', flexDirection: 'column', gap: '20px' }}>
             <div>
-              <p style={{ textTransform: 'uppercase', fontSize: '0.75rem', fontWeight: '800', color: '#6b7280', marginBottom: '4px' }}>SUMMARY</p>
+              <p style={{ textTransform: 'uppercase', fontSize: '0.75rem', fontWeight: '800', color:'#6b7280', marginBottom: '4px' }}>SUMMARY</p>
               <h3 style={{ fontSize: '1.25rem', fontWeight: '700' }}>LifeHub Identity</h3>
             </div>
 
@@ -253,7 +260,7 @@ export default function Profile() {
             </div>
 
             <div style={{ padding: '20px', borderRadius: '16px', border: '1px solid #E5E7EB', backgroundColor: '#FAFAFA' }}>
-              <p style={{ textTransform: 'uppercase', fontSize: '0.75rem', fontWeight: '800', color: '#6b7280', marginBottom: '8px' }}>PERSONAL GOAL</p>
+              <p style={{ textTransform: 'uppercase', fontSize: '0.75rem', fontWeight: '800', color:'#6b7280', marginBottom: '8px' }}>PERSONAL GOAL</p>
               <p style={{ color: '#374151', fontSize: '0.95rem', lineHeight: '1.5', margin: 0 }}>{form.goal}</p>
             </div>
           </section>
