@@ -265,8 +265,8 @@ export default function Quest() {
               <a href="#workspace" className="primary-btn">
                 Create Quest
               </a>
-              <Link to="/achievement" className="secondary-btn">
-                View Progress
+              <Link to="/profile" className="secondary-btn">
+                View Profile
               </Link>
             </div>
           </div>
@@ -299,6 +299,20 @@ export default function Quest() {
               }
               placeholder="Description"
             />
+
+            <select
+              value={form.category}
+              onChange={(e) =>
+                setForm({ ...form, category: e.target.value })
+              }
+            >
+              <option>Study</option>
+              <option>Work</option>
+              <option>Personal</option>
+              <option>Health</option>
+              <option>Hobby</option>
+              <option>Investment</option>
+            </select>
 
             <select
               value={form.priority}

@@ -138,7 +138,7 @@ export default function Habit() {
                 Create Habit
               </a>
               <a href="#habitList" className="secondary-btn">
-                View Habits
+                View Habits List
               </a>
             </div>
           </div>
