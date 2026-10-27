@@ -167,10 +167,10 @@ export default function Dashboard({ theme, toggleTheme }) {
             </div>
 
             <div className="topbar-actions" style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-              <button className="circle-btn notification-btn" onClick={() => setNotif(true)}>
+              {/* <button className="circle-btn notification-btn" onClick={() => setNotif(true)}>
                 <Icon name="bell" />
                 <span className="notification-count">{notifications.length}</span>
-              </button>
+              </button> */}
 
               {/* Tombol Lihat/Edit Profil */}
               <Link

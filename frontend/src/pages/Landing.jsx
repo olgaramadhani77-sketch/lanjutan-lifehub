@@ -6,17 +6,18 @@ export default function Landing() {
   usePageStyles(['/css/global.css', '/css/navbar.css', '/css/landing.css', '/css/animation.css', '/css/landing-visual.css']);
 
   return (
-    <div className="font-sans">
+    <div className="font-sans min-h-screen">
       <LandingNavbar />
 
-      <section id="home" className="visual-section feature-split bg-[#FFFFFF] text-center">
-        <div className="feature-text">
-          <h1 className="big-text text-black">
+      {/* Section 1 */}
+      <section id="home" className="visual-section feature-split bg-[#FFFFFF] text-center py-16 px-4">
+        <div className="feature-text max-w-2xl mx-auto mb-8">
+          <h1 className="text-4xl md:text-6xl font-bold text-black mb-4 leading-tight">
             Every day begins
             <br />
             with a plan.
           </h1>
-          <p className="small-text text-gray-500">But not every plan becomes progress.</p>
+          <p className="text-lg md:text-xl text-gray-500">But not every plan becomes progress.</p>
         </div>
         <PhoneFeature
           title="Today Plan"
@@ -29,10 +30,11 @@ export default function Landing() {
         />
       </section>
 
-      <section className="visual-section feature-split reverse bg-[#E0F2FE] text-gray text-center">
-        <div className="feature-text">
-          <h1 className="big-text">Tasks pile up.</h1>
-          <p className="small-text">Deadlines, distractions, and unfinished goals.</p>
+      {/* Section 2 */}
+      <section className="visual-section feature-split reverse bg-[#E0F2FE] text-gray-800 text-center py-16 px-4">
+        <div className="feature-text max-w-2xl mx-auto mb-8">
+          <h1 className="text-4xl md:text-6xl font-bold mb-4 leading-tight">Tasks pile up.</h1>
+          <p className="text-lg md:text-xl text-gray-600">Deadlines, distractions, and unfinished goals.</p>
         </div>
         <PhoneFeature
           title="Quest Manager"
@@ -45,10 +47,11 @@ export default function Landing() {
         />
       </section>
 
-      <section className="visual-section feature-split bg-[#CFFAFE] text-center">
-        <div className="feature-text">
-          <h1 className="big-text text-black-900">Habits fade.</h1>
-          <p className="small-text text-gray-600">Good intentions often disappear without consistency.</p>
+      {/* Section 3 */}
+      <section className="visual-section feature-split bg-[#CFFAFE] text-center py-16 px-4">
+        <div className="feature-text max-w-2xl mx-auto mb-8">
+          <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-4 leading-tight">Habits fade.</h1>
+          <p className="text-lg md:text-xl text-gray-600">Good intentions often disappear without consistency.</p>
         </div>
         <PhoneFeature
           title="Habit Tracker"
@@ -61,10 +64,11 @@ export default function Landing() {
         />
       </section>
 
-      <section className="visual-section feature-split reverse bg-[#CCFBF1] text-center">
-        <div className="feature-text">
-          <h1 className="big-text text-black-900">Focus disappears.</h1>
-          <p className="small-text text-gray-700">Time slips away when your attention keeps breaking apart.</p>
+      {/* Section 4 */}
+      <section className="visual-section feature-split reverse bg-[#CCFBF1] text-center py-16 px-4">
+        <div className="feature-text max-w-2xl mx-auto mb-8">
+          <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-4 leading-tight">Focus disappears.</h1>
+          <p className="text-lg md:text-xl text-gray-700">Time slips away when your attention keeps breaking apart.</p>
         </div>
         <PhoneFeature
           title="Pomodoro"
@@ -77,21 +81,23 @@ export default function Landing() {
         />
       </section>
 
-      <section className="bg-[#FAFAF9] text-center">
-        <div>
-          <div className="text-8xl fade-earth mb-8">🌎</div>
-          <h1 className="big-text text-gray-900">
+      {/* Section 5 - Earth */}
+      <section className="bg-[#FAFAF9] text-center py-24 px-4">
+        <div className="max-w-3xl mx-auto">
+          <div className="text-7xl md:text-8xl fade-earth mb-6">🌎</div>
+          <h1 className="text-3xl md:text-5xl font-bold text-gray-900 mb-4 leading-snug">
             And somewhere
             <br />
             along the way...
           </h1>
-          <p className="small-text text-gray-600">We forget the world around us.</p>
+          <p className="text-lg md:text-xl text-gray-600">We forget the world around us.</p>
         </div>
       </section>
 
-      <section className="bg-[#0F172A] text-center text-white">
-        <div>
-          <h1 className="big-text">
+      {/* Section 6 - Question */}
+      <section className="bg-[#0F172A] text-center text-white py-24 px-4">
+        <div className="max-w-3xl mx-auto">
+          <h1 className="text-3xl md:text-5xl font-bold leading-relaxed md:leading-snug">
             What if managing
             <br />
             your life could also
@@ -101,13 +107,17 @@ export default function Landing() {
         </div>
       </section>
 
-      <section className="bg-gradient-to-b from-emerald-500 to-blue-600 text-center text-white">
-        <div>
-          <h1 className="text-7xl font-bold mb-8">LIFEHUB</h1>
-          <p className="text-2xl mb-4">Track Your Life.</p>
-          <p className="text-2xl mb-12">Heal Your Earth.</p>
-          <div className="text-8xl mb-12 fade-earth">🌱</div>
-          <Link to="/onboarding" className="bg-white text-black px-10 py-5 rounded-full text-lg font-semibold glow-btn">
+      {/* Section 7 - Hero Footer */}
+      <section className="bg-gradient-to-b from-emerald-500 to-blue-600 text-center text-white py-28 px-4">
+        <div className="max-w-3xl mx-auto flex flex-col items-center">
+          <h1 className="text-5xl md:text-7xl font-extrabold mb-6 tracking-wide">LIFEHUB</h1>
+          <p className="text-xl md:text-3xl font-medium mb-2">Track Your Life.</p>
+          <p className="text-xl md:text-3xl font-medium mb-10">Heal Your Earth.</p>
+          <div className="text-7xl md:text-8xl mb-10 fade-earth">🌱</div>
+          <Link 
+            to="/login" 
+            className="inline-block bg-white text-emerald-800 px-8 py-4 rounded-full text-lg md:text-xl font-bold shadow-lg hover:bg-gray-100 transition duration-300"
+          >
             Enter LIFEHUB
           </Link>
         </div>
