@@ -1,12 +1,13 @@
-import React, { useState } from "react";
-import { useLifeHub, usePageStyles } from "../utils/hooks.js";
-import { Nav, StatCard, FloatCard } from "../components/index.js";
+import React, { useState, useEffect } from "react";
+import { usePageStyles } from "../utils/hooks.js";
+import { Nav, StatCard } from "../components/index.js";
 import {
-  addHabit,
-  updateHabit,
-  deleteHabit,
-  toggleHabit,
-} from "../utils/core.js";
+  fetchHabits,
+  createHabit,
+  updateHabitApi,
+  deleteHabitApi,
+  toggleHabitApi,
+} from "../utils/habitApi.js";
 
 const blankForm = {
   title: "",
@@ -18,35 +19,71 @@ const blankForm = {
 export default function Habit() {
   usePageStyles(["/css/pages.css", "/css/eco.css", "/css/gamification.css"]);
 
-  const { habits } = useLifeHub();
+  const [habits, setHabits] = useState([]);
   const [form, setForm] = useState(blankForm);
-  const [edit, setEdit] = useState(null);
-
-  {/* --- FITUR LOAD MORE: State untuk batas tampilan item (awal 2) --- */}
+  const [edit, setEdit] = useState(null);   // sekarang simpan objek habit, bukan index
   const [visibleCount, setVisibleCount] = useState(2);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
 
   const completed = habits.filter((h) => h.completed).length;
   const progress = habits.length
     ? Math.round((completed / habits.length) * 100)
     : 0;
 
-  const submit = (e) => {
-    e.preventDefault();
-    if (!form.title.trim()) return;
-
-    if (edit === null) {
-      addHabit(form);
-    } else {
-      updateHabit(edit, form);
+  // ============ LOAD DATA ============
+  async function loadHabits() {
+    setLoading(true);
+    setError("");
+    try {
+      const data = await fetchHabits();
+      setHabits(data);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
     }
+  }
 
-    setForm(blankForm);
-    setEdit(null);
+  useEffect(() => {
+    loadHabits();
+  }, []);
+
+  // ============ SUBMIT (CREATE / UPDATE) ============
+  const submit = async (e) => {
+    e.preventDefault();
+    if (!form.title.trim() || saving) return;
+
+    setSaving(true);
+    setError("");
+
+    try {
+      if (edit === null) {
+        await createHabit(form);
+        await loadHabits();
+      } else {
+        await updateHabitApi(edit.id, form);
+        await loadHabits();
+      }
+      setForm(blankForm);
+      setEdit(null);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setSaving(false);
+    }
   };
 
-  const startEdit = (index, habit) => {
-    setEdit(index);
-    setForm(habit);
+  // ============ EDIT ============
+  const startEdit = (habit) => {
+    setEdit(habit);
+    setForm({
+      title: habit.title || "",
+      description: habit.description || "",
+      category: habit.category || "Wellness",
+      target: habit.target || "Daily",
+    });
   };
 
   const cancelEdit = () => {
@@ -54,7 +91,32 @@ export default function Habit() {
     setForm(blankForm);
   };
 
-  {/* --- FITUR LOAD MORE: Handler penambahan jumlah item (+2) --- */}
+  // ============ TOGGLE ============
+  const handleToggle = async (habit) => {
+    setError("");
+    try {
+      await toggleHabitApi(habit.id, habit.completed);
+      await loadHabits();
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
+  // ============ DELETE ============
+  const handleDelete = async (habit) => {
+    if (!window.confirm(`Hapus habit "${habit.title}"?`)) return;
+
+    setError("");
+    try {
+      await deleteHabitApi(habit.id);
+      await loadHabits();
+      if (edit?.id === habit.id) cancelEdit();
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
+  // ============ LOAD MORE ============
   const handleLoadMore = () => {
     setVisibleCount((prevCount) => prevCount + 2);
   };
@@ -80,30 +142,6 @@ export default function Habit() {
               </a>
             </div>
           </div>
-
-          {/* <div className="visual-stage">
-            <div className="visual-orb"></div>
-
-            <FloatCard variant="one">
-              <h4>Daily Routine</h4>
-              <p>Drink water • Read • Stretch</p>
-            </FloatCard>
-
-            <FloatCard variant="two">
-              <div className="progress-ring">
-                <span>{progress}%</span>
-              </div>
-              <h4>Completion</h4>
-              <p>
-                {completed}/{habits.length} habits completed.
-              </p>
-            </FloatCard>
-
-            <FloatCard variant="three">
-              <h4>Streak Energy</h4>
-              <p>Small habits, stronger rhythm.</p>
-            </FloatCard>
-          </div> */}
         </section>
 
         <section className="stats-grid">
@@ -157,8 +195,12 @@ export default function Habit() {
               ))}
             </select>
 
-            <button className="primary-btn full-btn">
-              {edit === null ? "Add Habit" : "Save Changes"}
+            <button className="primary-btn full-btn" disabled={saving}>
+              {saving
+                ? "Saving..."
+                : edit === null
+                ? "Add Habit"
+                : "Save Changes"}
             </button>
 
             {edit !== null && (
@@ -176,13 +218,27 @@ export default function Habit() {
             <p className="panel-label">List</p>
             <h2>Your Habits</h2>
 
+            {error && (
+              <div role="alert" className="empty-feature">
+                <p>{error}</p>
+                <button
+                  type="button"
+                  className="secondary-btn"
+                  onClick={loadHabits}
+                >
+                  Try Again
+                </button>
+              </div>
+            )}
+
             <div className="feature-list">
-              {habits.length ? (
+              {loading ? (
+                <p>Loading habits...</p>
+              ) : habits.length ? (
                 <>
-                  {/* --- FITUR LOAD MORE: Pemotongan array menggunakan .slice(0, visibleCount) --- */}
-                  {habits.slice(0, visibleCount).map((h, i) => (
+                  {habits.slice(0, visibleCount).map((h) => (
                     <div
-                      key={i}
+                      key={h.id}
                       className={`eco-card ${h.completed ? "claimed" : ""}`}
                     >
                       <div className="eco-card-content">
@@ -206,21 +262,21 @@ export default function Habit() {
                       <div className="eco-actions">
                         <button
                           className="secondary-btn"
-                          onClick={() => startEdit(i, h)}
+                          onClick={() => startEdit(h)}
                         >
                           Edit
                         </button>
 
                         <button
                           className="primary-btn"
-                          onClick={() => toggleHabit(i)}
+                          onClick={() => handleToggle(h)}
                         >
                           {h.completed ? "Undone" : "Done"}
                         </button>
 
                         <button
                           className="danger-btn"
-                          onClick={() => deleteHabit(i)}
+                          onClick={() => handleDelete(h)}
                         >
                           Delete
                         </button>
@@ -228,7 +284,6 @@ export default function Habit() {
                     </div>
                   ))}
 
-                  {/* --- FITUR LOAD MORE: Tombol Load More muncul jika sisa data masih ada --- */}
                   {visibleCount < habits.length && (
                     <div style={{ textAlign: "center", marginTop: "1rem" }}>
                       <button
