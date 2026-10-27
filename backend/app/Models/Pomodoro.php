@@ -23,4 +23,9 @@ class Pomodoro extends Model
         'started_at' => 'datetime',
         'ended_at' => 'datetime',
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

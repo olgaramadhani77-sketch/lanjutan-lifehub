@@ -47,6 +47,13 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/eco-quests', [EcoQuestController::class, 'store']);
     Route::put('/eco-quests/{id}', [EcoQuestController::class, 'update']);
     Route::delete('/eco-quests/{id}', [EcoQuestController::class, 'destroy']);
+
+    // Pomodoro
+    Route::get('/pomodoro-sessions', [PomodoroController::class, 'index']);
+    Route::get('/pomodoro-sessions/{id}', [PomodoroController::class, 'show']);
+    Route::post('/pomodoro-sessions', [PomodoroController::class, 'store']);
+    Route::put('/pomodoro-sessions/{id}', [PomodoroController::class, 'update']);
+    Route::delete('/pomodoro-sessions/{id}', [PomodoroController::class, 'destroy']);
 });
 
 // ============ ROUTE PUBLIK (belum diproteksi) ============
@@ -57,9 +64,3 @@ Route::get('/users/{id}', [UserController::class, 'show']);
 Route::post('/users', [UserController::class, 'store']);
 Route::put('/users/{id}', [UserController::class, 'update']);
 Route::delete('/users/{id}', [UserController::class, 'destroy']);
-
-Route::get('/pomodoro-sessions', [PomodoroController::class, 'index']);
-Route::get('/pomodoro-sessions/{id}', [PomodoroController::class, 'show']);
-Route::post('/pomodoro-sessions', [PomodoroController::class, 'store']);
-Route::put('/pomodoro-sessions/{id}', [PomodoroController::class, 'update']);
-Route::delete('/pomodoro-sessions/{id}', [PomodoroController::class, 'destroy']);
