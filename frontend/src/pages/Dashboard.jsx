@@ -9,8 +9,9 @@ import {
   ConfirmResetModal,
   QuestModal,
 } from '../components/index.js';
-import { toggleHabit, getNotifications } from '../utils/core.js';
+import { getNotifications } from '../utils/core.js';
 import { fetchTasks, deleteTaskApi, toggleTaskApi } from '../utils/taskApi.js';
+import { fetchHabits, toggleHabitApi } from '../utils/habitApi.js';
 import { useAuth } from '../AuthContext.jsx';
 
 function greeting(name) {
@@ -77,12 +78,42 @@ export default function Dashboard({ theme, toggleTheme }) {
   }
   // ==========================================
 
+  // ============ HABITS DARI API ============
+  const [habits, setHabits] = useState([]);
+  const [habitsLoading, setHabitsLoading] = useState(true);
+
+  useEffect(() => {
+    loadHabits();
+  }, []);
+
+  async function loadHabits() {
+    setHabitsLoading(true);
+    try {
+      const data = await fetchHabits();
+      setHabits(data);
+    } catch (err) {
+      console.error('Gagal load habits:', err.message);
+    } finally {
+      setHabitsLoading(false);
+    }
+  }
+
+  async function handleToggleHabit(h) {
+    try {
+      await toggleHabitApi(h.id, h.completed);
+      await loadHabits();
+    } catch (err) {
+      console.error(err.message);
+    }
+  }
+  // ==========================================
+
   const notifications = getNotifications();
 
   const filteredTasks = tasks.filter((t) => !search || t.title.toLowerCase().includes(search.toLowerCase()));
   const highPriorityCount = tasks.filter((t) => t.priority === 'High').length;
   const overdueCount = tasks.filter((t) => t.dueDate && new Date(t.dueDate) < new Date(new Date().toDateString()) && !t.completed).length;
-  const habitsLeft = s.habits.filter((h) => !h.completed).length;
+  const habitsLeft = habits.filter((h) => !h.completed).length;
 
   // Ringkasan tasks dari state lokal (bukan dari getSummary)
   const totalTasks = tasks.length;
@@ -375,11 +406,13 @@ export default function Dashboard({ theme, toggleTheme }) {
                 </div>
 
                 <div className="habit-list">
-                  {s.habits.length ? (
-                    s.habits.slice(0, 3).map((h, i) => (
-                      <div className={`habit-item ${h.completed ? 'completed' : ''}`} key={i}>
+                  {habitsLoading ? (
+                    <p style={{ padding: '12px', color: '#6b7280' }}>Loading habits...</p>
+                  ) : habits.length ? (
+                    habits.slice(0, 3).map((h) => (
+                      <div className={`habit-item ${h.completed ? 'completed' : ''}`} key={h.id}>
                         <div className="habit-left">
-                          <button className={`habit-toggle ${h.completed ? 'done' : ''}`} onClick={() => toggleHabit(i)}></button>
+                          <button className={`habit-toggle ${h.completed ? 'done' : ''}`} onClick={() => handleToggleHabit(h)}></button>
                           <div>
                             <h4>{h.title}</h4>
                             <p>{h.category || h.target}</p>
