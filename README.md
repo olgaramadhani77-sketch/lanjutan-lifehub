@@ -1,7 +1,6 @@
 repo dullu : https://github.com/justaryadi/Eco-Project
 
-Berikut draf `README.md` yang sudah diperbarui dengan tambahan detail fitur spesifik untuk **Backend** serta kontribusi dari masing-masing anggota tim:
-
+Proyek ini lanjutan dari WCD dan menambahkan unsur backend kedalam proyek nya
 ---
 
 # 🌱 LIFEHUB
